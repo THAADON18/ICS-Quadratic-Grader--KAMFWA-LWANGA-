@@ -9,6 +9,7 @@ Locate: Find the index.html file in the main directory.
 
 Open: Simply double-click the index.html file. It will open automatically in your default web browser (e.g., Chrome, Firefox). The application runs entirely client-side..
 Score,Expected Grade
+Score,Expected Grade
 100,A+
 85,A+
 84,A
@@ -25,3 +26,8 @@ Score,Expected Grade
 0,D
 101,Error (Out of Range)
 -1,Error (Out of Range)
+a,b,c,D=b2−4ac,Expected Nature of Roots
+1,5,6,25−24=1,Two distinct real roots
+1,4,4,16−16=0,One real repeated root
+1,2,5,4−20=−16,Two complex conjugate roots
+0,1,1,N/A,Error (a cannot be 0)
