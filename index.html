@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT251 - Web App</title>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        main {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 1rem;
+        }
+        .task-section {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        .task-section:last-child {
+            border-bottom: none;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Fixes width issue */
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-compute {
+            background-color: #1a73e8;
+            color: white;
+        }
+        .btn-reset {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        .error-message {
+            color: #d93025;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .result-area {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #e8f0fe;
+            border: 1px solid #cce;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <h1>ICT251 - Quadratic & Grader App</h1>
+
+        <section class="task-section">
+            <h2>1. Quadratic Solver ($ax^2 + bx + c = 0$)</h2>
+            <form id="quadraticForm" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="coeffA">Coefficient a:</label>
+                    <input type="number" id="coeffA" name="a" placeholder="a">
+                </div>
+                <div class="form-group">
+                    <label for="coeffB">Coefficient b:</label>
+                    <input type="number" id="coeffB" name="b" placeholder="b">
+                </div>
+                <div class="form-group">
+                    <label for="coeffC">Coefficient c:</label>
+                    <input type="number" id="coeffC" name="c" placeholder="c">
+                </div>
+                
+                <button type="button" class="btn-compute" onclick="solveQuadratic()">Compute</button>
+                <button type="button" class="btn-reset" onclick="resetQuadratic()">Reset</button>
+
+                <div id="quadraticError" class="error-message"></div>
+                <div id="quadraticResult" class="result-area" style="display: none;"></div>
+            </form>
+        </section>
+
+        <section class="task-section">
+            <h2>2. Grading System (0-100)</h2>
+            <form id="gradingForm" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="score">Enter Score (0-100):</label>
+                    <input type="number" id="score" name="score" min="0" max="100" placeholder="e.g., 85">
+                </div>
+                
+                <button type="button" class="btn-compute" onclick="gradeScore()">Compute Grade</button>
+                <button type="button" class="btn-reset" onclick="resetGrader()">Reset</button>
+
+                <div id="gradingError" class="error-message"></div>
+                <div id="gradingResult" class="result-area" style="display: none;"></div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        
+        /*********************************/
+        /* QUADRATIC SOLVER         */
+        /*********************************/
+
+        function solveQuadratic() {
+            // Get references to DOM elements
+            const errorDiv = document.getElementById('quadraticError');
+            const resultDiv = document.getElementById('quadraticResult');
+            
+            // Clear previous errors and results
+            errorDiv.textContent = '';
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+
+            // --- TODO: Your logic starts here ---
+
+            [cite_start]// 1. Get values for a, b, and c [cite: 31]
+            //    Use parseFloat() to convert them from strings to numbers.
+            const a = parseFloat(document.getElementById('coeffA').value);
+            const b = parseFloat(document.getElementById('coeffB').value);
+            const c = parseFloat(document.getElementById('coeffC').value);
+
+            [cite_start]// 2. Validation [cite: 32, 33, 34]
+            //    - Check if a, b, or c are not numbers (use isNaN())
+            //    - Check if a is zero (a != 0)
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                [cite_start]errorDiv.textContent = 'All inputs must be valid numbers.'; [cite: 34, 35]
+                return;
+            }
+            if (a === 0) {
+                [cite_start]errorDiv.textContent = 'Coefficient "a" cannot be zero ($a \neq 0$).'; [cite: 33, 35]
+                return;
+            }
+
+            [cite_start]// 3. Calculations [cite: 38]
+            //    - Calculate the discriminant (D = b^2 - 4ac)
+            const discriminant = (b * b) - (4 * a * c);
+            
+            let natureOfRoots = '';
+            
+            [cite_start]// 4. Determine Nature of Roots [cite: 40, 41, 42, 43]
+            //    - Use an if/else if/else block to check D
+            if (discriminant > 0) {
+                [cite_start]natureOfRoots = 'Two distinct real roots'; [cite: 41]
+            } else if (discriminant === 0) {
+                [cite_start]natureOfRoots = 'One real repeated root'; [cite: 42]
+            } else { // (discriminant < 0)
+                [cite_start]natureOfRoots = 'Two complex conjugate roots'; [cite: 43]
+            }
+
+            [cite_start]// 5. Output Results [cite: 45]
+            //    - Format the output neatly. Use .toFixed(2) for 2 decimal places.
+            resultDiv.innerHTML = `
+                <strong>Discriminant (D):</strong> ${discriminant.toFixed(2)}<br>
+                <strong>Nature of Roots:</strong> ${natureOfRoots}
+            `;
+            resultDiv.style.display = 'block';
+        }
+
+        [cite_start]function resetQuadratic() { [cite: 45]
+            document.getElementById('quadraticForm').reset();
+            document.getElementById('quadraticError').textContent = '';
+            document.getElementById('quadraticResult').style.display = 'none';
+            document.getElementById('quadraticResult').innerHTML = '';
+        }
+
+
+        /*********************************/
+        /* GRADING SYSTEM         */
+        /*********************************/
+
+        function gradeScore() {
+            // Get references to DOM elements
+            const errorDiv = document.getElementById('gradingError');
+            const resultDiv = document.getElementById('gradingResult');
+            
+            // Clear previous errors and results
+            errorDiv.textContent = '';
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+
+            // --- TODO: Your logic starts here ---
+
+            [cite_start]// 1. Get the score value [cite: 47]
+            //    Use parseInt() or parseFloat()
+            const score = parseFloat(document.getElementById('score').value);
+
+            [cite_start]// 2. Validation [cite: 48]
+            //    - Check if the score is a number (isNaN())
+            //    - Check if it's in the range [0, 100]
+            if (isNaN(score)) {
+                [cite_start]errorDiv.textContent = 'Input must be a valid number.'; [cite: 48]
+                return;
+            }
+            if (score < 0 || score > 100) {
+                [cite_start]errorDiv.textContent = 'Score must be between 0 and 100 (inclusive).'; [cite: 48]
+                return;
+            }
+
+            [cite_start]// 3. Grading Logic [cite: 10-17]
+            //    - Use an if/else if... chain.
+            //    - IMPORTANT: Start from the top (A+) and go down.
+            let grade = '';
+            
+            [cite_start]if (score >= 85) { [cite: 11]
+                grade = 'A+';
+            [cite_start]} else if (score >= 75) { // 75-84 [cite: 12]
+                grade = 'A';
+            [cite_start]} else if (score >= 65) { // 65-74 [cite: 13]
+                grade = 'B+';
+            [cite_start]} else if (score >= 60) { // 60-64 [cite: 14]
+                grade = 'B';
+            [cite_start]} else if (score >= 55) { // 55-59 [cite: 15]
+                grade = 'C+';
+            [cite_start]} else if (score >= 50) { // 50-54 [cite: 16]
+                grade = 'C';
+            [cite_start]} else { // 0-49 [cite: 17]
+                grade = 'D';
+            }
+
+            [cite_start]// 4. Output Result [cite: 49, 51]
+            //    - Format as "Score 82 -> Grade A"
+            resultDiv.innerHTML = `Score ${score} &rarr; Grade <strong>${grade}</strong>`;
+            resultDiv.style.display = 'block';
+        }
+
+        function resetGrader() {
+            document.getElementById('gradingForm').reset();
+            document.getElementById('gradingError').textContent = '';
+            document.getElementById('gradingResult').style.display = 'none';
+            document.getElementById('gradingResult').innerHTML = '';
+        }
+
+    </script>
+</body>
+</html>
